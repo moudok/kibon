@@ -1,4 +1,5 @@
 #!env/bin/python3
+# -*- coding: utf-8 -*-
 
 """
 Title: Kibon Card PDF Generator
@@ -10,8 +11,10 @@ Description:
 Generates an A4 landscape PDF file with martial arts training cards.
 Each card includes a title, subcategory, number, list of movements,
 an SVG illustration, and a QR code pointing to a video URL with timestamp.
+
 Cards are styled using Open Sans fonts and grouped 8 per page
-in a 4×2 layout. Configuration (colors, images) is provided via YAML.
+in a 4×2 layout. Each front page is followed by a matching back page
+with visual elements for double-sided printing.
 """
 
 import yaml
@@ -52,29 +55,30 @@ def hex_to_rgb(hex_str):
     hex_str = hex_str.strip('#')
     return tuple(int(hex_str[i:i+2], 16) / 255. for i in (0, 2, 4))
 
+def draw_header(c):
+    c.setFont("OpenSans", 8)
+    c.setFillColor("#666666")
+    c.drawString(10 * mm, page_height - 8 * mm, "author: benjamin@moudok.fr")
+    c.drawRightString(page_width - 10 * mm, page_height - 8 * mm, "source: FFTDA.fr")
+    c.setFillColor("black")
+
 def draw_card(c, x, y, main_cat, sub_cat, card, video_url, color_code, image_name):
-    # Background color
     c.setFillColorRGB(*hex_to_rgb(color_code))
     c.rect(x, y, card_width, card_height, fill=True, stroke=False)
 
-    # Inner white rectangle
     margin = 5 * mm
     c.setFillColor("#f8f8f8")
     c.rect(x + margin, y + margin, card_width - 2 * margin, card_height - 2 * margin, fill=True, stroke=False)
 
     c.setFillColor("black")
-
-    # Title (centered)
     c.setFont("OpenSansExtraBold", 12)
     c.drawCentredString(x + card_width / 2, y + card_height - 12 * mm, main_cat)
 
-    # Subcategory position and wrapping (left aligned at 15mm from left)
     c.setFont("OpenSansBold", 9)
     subcat_x = x + 15 * mm
     subcat_y_start = y + card_height - 18 * mm
-    max_width = card_width - (subcat_x - x) - 5 * mm  # remaining space
+    max_width = card_width - (subcat_x - x) - 5 * mm
 
-    # Break into max 2 lines that fit the space
     from reportlab.pdfbase.pdfmetrics import stringWidth
     words = sub_cat.split()
     lines = []
@@ -90,7 +94,6 @@ def draw_card(c, x, y, main_cat, sub_cat, card, video_url, color_code, image_nam
         lines.append(line)
     lines = lines[:2]
 
-    # SVG image (10mm × 10mm, vertically aligned with first subcategory line)
     svg_path = os.path.join("images", image_name)
     svg_size = 10 * mm
     if image_name and os.path.exists(svg_path):
@@ -98,25 +101,17 @@ def draw_card(c, x, y, main_cat, sub_cat, card, video_url, color_code, image_nam
         scale_x = svg_size / drawing.width
         scale_y = svg_size / drawing.height
         drawing.scale(scale_x, scale_y)
-        renderPDF.draw(
-            drawing,
-            c,
-            x + 5 * mm,  # left margin
-            subcat_y_start - 6 * mm  # fine-tuned vertical alignment
-        )
+        renderPDF.draw(drawing, c, x + 5 * mm, subcat_y_start - 6 * mm)
 
-    # Draw subcategory text lines
     c.setFillColor("#808080")
     for i, line in enumerate(lines):
         c.drawString(subcat_x, subcat_y_start - (i * 5 * mm), line)
 
-    # Card number (moved 10mm up, gray)
     c.setFont("OpenSans", 9)
     c.setFillColor("#a0a0a0")
     c.drawCentredString(x + card_width / 2, y + card_height - 33 * mm, f"Carte n°{card['Numéro']}")
     c.setFillColor("black")
 
-    # Movements (moved 10mm up), bold if contains "SEUGUI"
     y_offset = 38 * mm
     for move in card["Mouvements"]:
         if "SEUGUI" in move.upper():
@@ -126,8 +121,6 @@ def draw_card(c, x, y, main_cat, sub_cat, card, video_url, color_code, image_nam
         c.drawCentredString(x + card_width / 2, y + card_height - y_offset, move)
         y_offset += 5 * mm
 
-
-    # QR code (still centered at bottom)
     qr_url = f"{video_url}?t={card['Marqueur']}"
     qr = qrcode.make(qr_url)
     buffer = BytesIO()
@@ -135,31 +128,89 @@ def draw_card(c, x, y, main_cat, sub_cat, card, video_url, color_code, image_nam
     buffer.seek(0)
     qr_img = ImageReader(buffer)
     qr_size = 30 * mm
-    c.drawImage(
-        qr_img,
-        x + (card_width - qr_size) / 2,
-        y + 5 * mm,
-        width=qr_size,
-        height=qr_size
-    )
+    c.drawImage(qr_img, x + (card_width - qr_size) / 2, y + 5 * mm, width=qr_size, height=qr_size)
 
+def draw_back_card(c, x, y, main_cat, color_code, image_name):
+    c.setFillColorRGB(*hex_to_rgb(color_code))
+    c.rect(x, y, card_width, card_height, fill=True, stroke=False)
+    # Header text
+    c.setFont("OpenSans", 6)
+    c.setFillColor("white")
+    c.drawString(x + 5 * mm, y + card_height - 6 * mm, "source: fftda.fr")
+    c.drawRightString(x + card_width - 5 * mm, y + card_height - 6 * mm, "moudok.fr")
+    center_x = x + card_width / 2
+    center_y = y + card_height / 2 + 10 * mm
+    radius = 25 * mm
+    c.setFillColor("white")
+    c.circle(center_x, center_y, radius, stroke=False, fill=True)
 
-# Draw all cards
+    svg_path = os.path.join("images", image_name)
+    svg_size = 30 * mm
+    if image_name and os.path.exists(svg_path):
+        drawing = svg2rlg(svg_path)
+        scale_x = svg_size / drawing.width
+        scale_y = svg_size / drawing.height
+        drawing.scale(scale_x, scale_y)
+        renderPDF.draw(drawing, c, center_x - svg_size / 2, center_y - svg_size / 2)
+
+    c.setFont("OpenSansExtraBold", 10)
+    c.setFillColor("black")
+    c.drawCentredString(center_x - 0.3 * mm, y + card_height / 2 - 30.3 * mm, main_cat)
+    c.drawCentredString(center_x + 0.1 * mm, y + card_height / 2 - 29.9 * mm, main_cat)
+    c.setFillColor("white")
+    c.drawCentredString(center_x, y + card_height / 2 - 30 * mm, main_cat)
+    c.setFillColor("black")
+
+# Main loop: 8 cards per page, front + back
+page_cards = []
 card_counter = 0
+
 for main_cat, subcats in kibon_data.items():
     for sub_cat, content in subcats.items():
         video_url = content["Vidéo"]
         color = config_data.get(main_cat, {}).get(sub_cat, {}).get("color", "ffffff")
         image_name = config_data.get(main_cat, {}).get(sub_cat, {}).get("image", "")
         for card in content["Cartes"]:
-            col = card_counter % cards_per_row
-            row = (card_counter // cards_per_row) % cards_per_col
-            x = col * card_width
-            y = page_height - (row + 1) * card_height
-            draw_card(pdf, x, y, main_cat, sub_cat, card, video_url, color, image_name)
-            card_counter += 1
-            if card_counter % (cards_per_row * cards_per_col) == 0:
+            page_cards.append((main_cat, sub_cat, card, video_url, color, image_name))
+
+            if len(page_cards) == 8:
+                draw_header(pdf)
+                for idx, (main_cat, sub_cat, card, video_url, color, image_name) in enumerate(page_cards):
+                    col = idx % cards_per_row
+                    row = idx // cards_per_row
+                    x = col * card_width
+                    y = page_height - (row + 1) * card_height
+                    draw_card(pdf, x, y, main_cat, sub_cat, card, video_url, color, image_name)
                 pdf.showPage()
+
+                for idx, (main_cat, _, _, _, color, image_name) in enumerate(page_cards):
+                    col = idx % cards_per_row
+                    row = idx // cards_per_row
+                    x = col * card_width
+                    y = page_height - (row + 1) * card_height
+                    draw_back_card(pdf, x, y, main_cat, color, image_name)
+                pdf.showPage()
+
+                page_cards = []
+
+# Render remaining cards
+if page_cards:
+    draw_header(pdf)
+    for idx, (main_cat, sub_cat, card, video_url, color, image_name) in enumerate(page_cards):
+        col = idx % cards_per_row
+        row = idx // cards_per_row
+        x = col * card_width
+        y = page_height - (row + 1) * card_height
+        draw_card(pdf, x, y, main_cat, sub_cat, card, video_url, color, image_name)
+    pdf.showPage()
+
+    for idx, (main_cat, _, _, _, color, image_name) in enumerate(page_cards):
+        col = idx % cards_per_row
+        row = idx // cards_per_row
+        x = col * card_width
+        y = page_height - (row + 1) * card_height
+        draw_back_card(pdf, x, y, main_cat, color, image_name)
+    pdf.showPage()
 
 pdf.save()
 print("PDF created: kibon.pdf")
