@@ -64,7 +64,7 @@ def draw_header(c):
 
 def draw_card(c, x, y, main_cat, sub_cat, card, video_url, color_code, image_name):
     c.setFillColorRGB(*hex_to_rgb(color_code))
-    c.rect(x, y, card_width, card_height, fill=True, stroke=False)
+    c.rect(x, y, card_width - 0.1 * mm, card_height - 0.1 * mm, fill=True, stroke=False)
 
     margin = 5 * mm
     c.setFillColor("#f8f8f8")
