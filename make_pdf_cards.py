@@ -62,6 +62,29 @@ def hex_to_rgb(hex_str):
     hex_str = hex_str.strip('#')
     return tuple(int(hex_str[i:i+2], 16) / 255. for i in (0, 2, 4))
 
+def draw_cutting_guides(c, x, y):
+    thickness = 0.3
+    guide_len = 7 * mm
+    offset = thickness / 2
+
+    c.setFillColor("#a0a0a0")
+
+    # Top-left
+    c.rect(x - offset, y + card_height - offset, guide_len, thickness, fill=True, stroke=False)
+    c.rect(x - offset, y + card_height - guide_len, thickness, guide_len, fill=True, stroke=False)
+
+    # Top-right
+    c.rect(x + card_width - guide_len, y + card_height - offset, guide_len, thickness, fill=True, stroke=False)
+    c.rect(x + card_width - offset, y + card_height - guide_len, thickness, guide_len, fill=True, stroke=False)
+
+    # Bottom-left
+    c.rect(x - offset, y - offset, guide_len, thickness, fill=True, stroke=False)
+    c.rect(x - offset, y, thickness, guide_len, fill=True, stroke=False)
+
+    # Bottom-right
+    c.rect(x + card_width - guide_len, y - offset, guide_len, thickness, fill=True, stroke=False)
+    c.rect(x + card_width - offset, y, thickness, guide_len, fill=True, stroke=False)
+
 def draw_card(c, x, y, main_cat, sub_cat, card, video_url, color_code, image_name):
     c.setFillColorRGB(*hex_to_rgb(color_code))
     c.rect(x + 5 * mm, y + 5 * mm, card_width - 10 * mm, card_height - 10 * mm, fill=True, stroke=False)
@@ -199,6 +222,7 @@ for main_cat, subcats in kibon_data.items():
                     x = col * card_width
                     y = page_height - (row + 1) * card_height
                     draw_back_card(pdf, x, y, main_cat, sub_cat, color, image_name)
+                    draw_cutting_guides(pdf, x, y)
                 pdf.showPage()
 
                 page_cards = []
@@ -211,6 +235,7 @@ if page_cards:
         x = col * card_width
         y = page_height - (row + 1) * card_height
         draw_card(pdf, x, y, main_cat, sub_cat, card, video_url, color, image_name)
+        draw_cutting_guides(pdf, x, y)
     pdf.showPage()
 
     for idx, (main_cat, _, _, _, color, image_name) in enumerate(page_cards):
