@@ -1,50 +1,50 @@
 KIBON 1er DAN:
   Enchaînements membres supérieurs:
-    color: 'd45500'
+    couleur: 'd45500'
     image: S.svg
   Enchaînements membres supérieurs et membres inférieurs:
-    color: 'ff7f2a'
+    couleur: 'ff7f2a'
     image: SI.svg
   Enchaînements membres inférieurs:
-    color: 'ffccaa'
+    couleur: 'ffccaa'
     image: I.svg
 KIBON 2ème DAN:
   Enchaînements membres supérieurs:
-    color: '2d5016'
+    couleur: '2d5016'
     image: S.svg
   Enchaînements membres supérieurs et membres inférieurs:
-    color: '5aa02c'
+    couleur: '5aa02c'
     image: SI.svg
   Enchaînements membres inférieurs:
-    color: 'aade87'
+    couleur: 'aade87'
     image: I.svg
 KIBON 3ème DAN:
   Enchaînements membres supérieurs:
-    color: '162d50'
+    couleur: '162d50'
     image: S.svg
   Enchaînements membres supérieurs et membres inférieurs:
-    color: '2c5aa0'
+    couleur: '2c5aa0'
     image: SI.svg
   Enchaînements membres inférieurs:
-    color: '87aade'
+    couleur: '87aade'
     image: I.svg
 KIBON 4ème DAN:
   Enchaînements membres supérieurs:
-    color: 'aa0044'
+    couleur: 'aa0044'
     image: S.svg
   Enchaînements membres supérieurs et membres inférieurs:
-    color: 'ff0066'
+    couleur: 'ff0066'
     image: SI.svg
   Enchaînements membres inférieurs:
-    color: 'ff80b2'
+    couleur: 'ff80b2'
     image: I.svg
 KIBON 5ème DAN:
   Enchaînements membres supérieurs:
-    color: '241c22'
+    couleur: '241c22'
     image: S.svg
   Enchaînements membres supérieurs et membres inférieurs:
-    color: '483745'
+    couleur: '483745'
     image: SI.svg
   Enchaînements membres inférieurs:
-    color: 'ac93a7'
+    couleur: 'ac93a7'
     image: I.svg

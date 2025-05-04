@@ -90,8 +90,26 @@ def draw_card(c, x, y, main_cat, sub_cat, card, video_url, color_code, image_nam
     c.rect(x + 5 * mm, y + 5 * mm, card_width - 10 * mm, card_height - 10 * mm, fill=True, stroke=False)
 
     margin = 6 * mm
-    c.setFillColor("#f8f8f8")
+    c.setFillColor("white")
     c.rect(x + margin, y + margin, card_width - 2 * margin, card_height - 2 * margin, fill=True, stroke=False)
+
+    # Semi-transparent colored rectangle below category/subcategory
+    rect_x = x + 5 * mm
+    rect_y = y + card_height - 28 * mm
+    rect_w = card_width - 10 * mm
+    rect_h = 22 * mm
+    r, g, b = hex_to_rgb(color_code)
+    c.setFillColorRGB(r, g, b, alpha=0.2)
+    c.rect(rect_x, rect_y, rect_w, rect_h, fill=True, stroke=False)
+
+    # Quarter-transparent colored rectangle below movements
+    rect_x = x + 5 * mm
+    rect_y = y + card_height - 69 * mm
+    rect_w = card_width - 10 * mm
+    rect_h = 41 * mm
+    r, g, b = hex_to_rgb(color_code)
+    c.setFillColorRGB(r, g, b, alpha=0.1)
+    c.rect(rect_x, rect_y, rect_w, rect_h, fill=True, stroke=False)
 
     c.setFillColor("black")
     c.setFont("OpenSansExtraBold", 12)
@@ -202,7 +220,7 @@ card_counter = 0
 for main_cat, subcats in kibon_data.items():
     for sub_cat, content in subcats.items():
         video_url = content["Vidéo"]
-        color = config_data.get(main_cat, {}).get(sub_cat, {}).get("color", "ffffff")
+        color = config_data.get(main_cat, {}).get(sub_cat, {}).get("couleur", "ffffff")
         image_name = config_data.get(main_cat, {}).get(sub_cat, {}).get("image", "")
         for card in content["Cartes"]:
             page_cards.append((main_cat, sub_cat, card, video_url, color, image_name))
