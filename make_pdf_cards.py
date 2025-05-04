@@ -118,8 +118,9 @@ def draw_card(c, x, y, main_cat, sub_cat, card, video_url, color_code, image_nam
             c.setFont("OpenSansBold", 9)
         else:
             c.setFont("OpenSans", 9)
+
         c.drawCentredString(x + card_width / 2, y + card_height - y_offset, move)
-        y_offset += 5 * mm
+        y_offset += 3 * mm if move.strip().endswith("…") else 5 * mm
 
     qr_url = f"{video_url}?t={card['Marqueur']}"
     qr = qrcode.make(qr_url)
@@ -128,7 +129,7 @@ def draw_card(c, x, y, main_cat, sub_cat, card, video_url, color_code, image_nam
     buffer.seek(0)
     qr_img = ImageReader(buffer)
     qr_size = 30 * mm
-    c.drawImage(qr_img, x + (card_width - qr_size) / 2, y + 7 * mm, width=qr_size, height=qr_size)
+    c.drawImage(qr_img, x + (card_width - qr_size) / 2, y + 6 * mm, width=qr_size, height=qr_size)
 
 def draw_back_card(c, x, y, main_cat, sub_cat, color_code, image_name):
     c.setFillColorRGB(*hex_to_rgb(color_code))
