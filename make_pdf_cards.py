@@ -50,7 +50,7 @@ pdf = canvas.Canvas("kibon.pdf", pagesize=landscape(A4))
 pdf.setTitle("FFTDA.fr · Examens Dan 1 à 5 · Module A · KIBON")
 pdf.setSubject("Les fiches de révision des Kibons de Taekwondo avec QR-code vers les vidéos")
 pdf.setAuthor("Fédération Française de Taekwondo et disciplines associées")
-pdf.setKeywords("Taekwondo, Kibon, FFTDA, Passage de grade, Module A")
+pdf.setKeywords("Taekwondo, Kibon, FFTDA, Examen Dan, Module A")
 pdf.setCreator("benjamin@moudok.fr")
 
 # Register fonts
