@@ -116,7 +116,7 @@ def draw_card(c, x, y, main_cat, sub_cat, card, video_url, color_code, image_nam
     c.drawCentredString(x + card_width / 2, y + card_height - 12 * mm, main_cat)
 
     c.setFont("OpenSansBold", 9)
-    subcat_x = x + 15 * mm
+    subcat_x = x + 14 * mm
     subcat_y_start = y + card_height - 18 * mm
     max_width = card_width - (subcat_x - x) - 5 * mm
 
