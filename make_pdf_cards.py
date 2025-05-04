@@ -46,6 +46,13 @@ cards_per_col = 2
 
 pdf = canvas.Canvas("kibon.pdf", pagesize=landscape(A4))
 
+#Metadata
+pdf.setTitle("FFTDA.fr · Examens Dan 1 à 5 · Module A · KIBON")
+pdf.setSubject("Les fiches de révision des Kibons de Taekwondo avec QR-code vers les vidéos")
+pdf.setAuthor("Fédération Française de Taekwondo et disciplines associées")
+pdf.setKeywords("Taekwondo, Kibon, FFTDA, Passage de grade, Module A")
+pdf.setCreator("benjamin@moudok.fr")
+
 # Register fonts
 pdfmetrics.registerFont(TTFont("OpenSans", "fonts/Open_Sans/static/OpenSans-Regular.ttf"))
 pdfmetrics.registerFont(TTFont("OpenSansBold", "fonts/Open_Sans/static/OpenSans-Bold.ttf"))
@@ -55,18 +62,11 @@ def hex_to_rgb(hex_str):
     hex_str = hex_str.strip('#')
     return tuple(int(hex_str[i:i+2], 16) / 255. for i in (0, 2, 4))
 
-def draw_header(c):
-    c.setFont("OpenSans", 8)
-    c.setFillColor("#666666")
-    c.drawString(10 * mm, page_height - 8 * mm, "author: benjamin@moudok.fr")
-    c.drawRightString(page_width - 10 * mm, page_height - 8 * mm, "source: FFTDA.fr")
-    c.setFillColor("black")
-
 def draw_card(c, x, y, main_cat, sub_cat, card, video_url, color_code, image_name):
     c.setFillColorRGB(*hex_to_rgb(color_code))
-    c.rect(x, y, card_width - 0.1 * mm, card_height - 0.1 * mm, fill=True, stroke=False)
+    c.rect(x + 5 * mm, y + 5 * mm, card_width - 10 * mm, card_height - 10 * mm, fill=True, stroke=False)
 
-    margin = 5 * mm
+    margin = 6 * mm
     c.setFillColor("#f8f8f8")
     c.rect(x + margin, y + margin, card_width - 2 * margin, card_height - 2 * margin, fill=True, stroke=False)
 
@@ -128,20 +128,20 @@ def draw_card(c, x, y, main_cat, sub_cat, card, video_url, color_code, image_nam
     buffer.seek(0)
     qr_img = ImageReader(buffer)
     qr_size = 30 * mm
-    c.drawImage(qr_img, x + (card_width - qr_size) / 2, y + 5 * mm, width=qr_size, height=qr_size)
+    c.drawImage(qr_img, x + (card_width - qr_size) / 2, y + 7 * mm, width=qr_size, height=qr_size)
 
-def draw_back_card(c, x, y, main_cat, color_code, image_name):
+def draw_back_card(c, x, y, main_cat, sub_cat, color_code, image_name):
     c.setFillColorRGB(*hex_to_rgb(color_code))
-    c.rect(x, y, card_width, card_height, fill=True, stroke=False)
+    c.rect(x + 5 * mm, y + 5 * mm, card_width - 10 * mm, card_height - 10 * mm, fill=True, stroke=False)
     # Header text
     c.setFont("OpenSans", 6)
     c.setFillColor("white")
-    c.drawString(x + 5 * mm, y + card_height - 6 * mm, "source: fftda.fr")
-    c.drawRightString(x + card_width - 5 * mm, y + card_height - 6 * mm, "moudok.fr")
+    c.drawString(x + 8 * mm, y + card_height - 9 * mm, "Source: FFTDA.fr 2022")
+    c.drawRightString(x + card_width - 8 * mm, y + card_height - 9 * mm, "moudok.fr")
     center_x = x + card_width / 2
     center_y = y + card_height / 2 + 10 * mm
     radius = 25 * mm
-    c.setFillColor("white")
+    c.setFillColorRGB(1, 1, 1, alpha=0.5)
     c.circle(center_x, center_y, radius, stroke=False, fill=True)
 
     svg_path = os.path.join("images", image_name)
@@ -153,12 +153,22 @@ def draw_back_card(c, x, y, main_cat, color_code, image_name):
         drawing.scale(scale_x, scale_y)
         renderPDF.draw(drawing, c, center_x - svg_size / 2, center_y - svg_size / 2)
 
-    c.setFont("OpenSansExtraBold", 10)
+    # Black semi-transparent rectangle below category/subcategory
+    rect_x = x + 5 * mm
+    rect_y = y + card_height / 2 - 38 * mm  # adjust vertically to be below texts
+    rect_w = card_width
+    rect_h = 15 * mm
+    c.setFillColorRGB(0, 0, 0, alpha=0.25)
+    c.rect(rect_x, rect_y, rect_w - 10 * mm, rect_h, fill=True, stroke=False)
+
+    c.setFont("OpenSansExtraBold", 18)
     c.setFillColor("black")
     c.drawCentredString(center_x - 0.3 * mm, y + card_height / 2 - 30.3 * mm, main_cat)
     c.drawCentredString(center_x + 0.1 * mm, y + card_height / 2 - 29.9 * mm, main_cat)
     c.setFillColor("white")
     c.drawCentredString(center_x, y + card_height / 2 - 30 * mm, main_cat)
+    c.setFont("OpenSans", 6)
+    c.drawCentredString(center_x, y + card_height / 2 - 35 * mm, sub_cat)
     c.setFillColor("black")
 
 # Main loop: 8 cards per page, front + back
@@ -174,7 +184,6 @@ for main_cat, subcats in kibon_data.items():
             page_cards.append((main_cat, sub_cat, card, video_url, color, image_name))
 
             if len(page_cards) == 8:
-                draw_header(pdf)
                 for idx, (main_cat, sub_cat, card, video_url, color, image_name) in enumerate(page_cards):
                     col = idx % cards_per_row
                     row = idx // cards_per_row
@@ -188,14 +197,13 @@ for main_cat, subcats in kibon_data.items():
                     row = idx // cards_per_row
                     x = col * card_width
                     y = page_height - (row + 1) * card_height
-                    draw_back_card(pdf, x, y, main_cat, color, image_name)
+                    draw_back_card(pdf, x, y, main_cat, sub_cat, color, image_name)
                 pdf.showPage()
 
                 page_cards = []
 
 # Render remaining cards
 if page_cards:
-    draw_header(pdf)
     for idx, (main_cat, sub_cat, card, video_url, color, image_name) in enumerate(page_cards):
         col = idx % cards_per_row
         row = idx // cards_per_row
@@ -209,7 +217,7 @@ if page_cards:
         row = idx // cards_per_row
         x = col * card_width
         y = page_height - (row + 1) * card_height
-        draw_back_card(pdf, x, y, main_cat, color, image_name)
+        draw_back_card(pdf, x, y, main_cat, sub_cat, color, image_name)
     pdf.showPage()
 
 pdf.save()
