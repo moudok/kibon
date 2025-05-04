@@ -31,9 +31,9 @@ Ces cartes sont similaires à celles utilisées lors des examens Dan de la [FFTD
 
 ### 📁 Structure du projet
 
-- [`kibon.yaml`](blob/main/kibon.yaml) : Contenu des Kibons (catégories, mouvements, vidéos)
-- [`config.yaml`](blob/main/config.yaml) : Paramétrage graphique (couleurs, pictogrammes SVG)
-- [`make_pdf_cards.py`](blob/main/make_pdf_cards.py) : Script principal de génération
+- [`kibon.yaml`](kibon.yaml) : Contenu des Kibons (catégories, mouvements, vidéos)
+- [`config.yaml`](config.yaml) : Paramétrage graphique (couleurs, pictogrammes SVG)
+- [`make_pdf_cards.py`](make_pdf_cards.py) : Script principal de génération
 
 ### 🐍 Prérequis
 
