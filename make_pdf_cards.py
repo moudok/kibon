@@ -144,7 +144,7 @@ def draw_card(c, x, y, main_cat, sub_cat, card, video_url, color_code, image_nam
         drawing.scale(scale_x, scale_y)
         renderPDF.draw(drawing, c, x + 5 * mm, subcat_y_start - 6 * mm)
 
-    c.setFillColor("#808080")
+    c.setFillColor("#b30026")
     for i, line in enumerate(lines):
         c.drawString(subcat_x, subcat_y_start - (i * 5 * mm), line)
 
@@ -182,7 +182,7 @@ def draw_back_card(c, x, y, main_cat, sub_cat, color_code, image_name):
     c.drawRightString(x + card_width - 8 * mm, y + card_height - 9 * mm, "moudok.fr")
     center_x = x + card_width / 2
     center_y = y + card_height / 2 + 10 * mm
-    radius = 25 * mm
+    radius = 20 * mm
     c.setFillColorRGB(1, 1, 1, alpha=0.5)
     c.circle(center_x, center_y, radius, stroke=False, fill=True)
 
@@ -197,20 +197,20 @@ def draw_back_card(c, x, y, main_cat, sub_cat, color_code, image_name):
 
     # Black semi-transparent rectangle below category/subcategory
     rect_x = x + 5 * mm
-    rect_y = y + card_height / 2 - 38 * mm  # adjust vertically to be below texts
+    rect_y = y + card_height / 2 - 47.5 * mm  # adjust vertically to be below texts
     rect_w = card_width
-    rect_h = 15 * mm
+    rect_h = 25 * mm
     c.setFillColorRGB(0, 0, 0, alpha=0.25)
     c.rect(rect_x, rect_y, rect_w - 10 * mm, rect_h, fill=True, stroke=False)
 
     c.setFont("OpenSansExtraBold", 18)
     c.setFillColor("black")
-    c.drawCentredString(center_x - 0.3 * mm, y + card_height / 2 - 30.3 * mm, main_cat)
-    c.drawCentredString(center_x + 0.1 * mm, y + card_height / 2 - 29.9 * mm, main_cat)
+    c.drawCentredString(center_x - 0.3 * mm, y + card_height / 2 - 35.3 * mm, main_cat)
+    c.drawCentredString(center_x + 0.1 * mm, y + card_height / 2 - 34.9 * mm, main_cat)
     c.setFillColor("white")
-    c.drawCentredString(center_x, y + card_height / 2 - 30 * mm, main_cat)
+    c.drawCentredString(center_x, y + card_height / 2 - 35 * mm, main_cat)
     c.setFont("OpenSans", 6)
-    c.drawCentredString(center_x, y + card_height / 2 - 35 * mm, sub_cat)
+    c.drawCentredString(center_x, y + card_height / 2 - 40 * mm, sub_cat)
     c.setFillColor("black")
 
 # Main loop: 8 cards per page, front + back
