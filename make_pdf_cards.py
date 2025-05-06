@@ -163,7 +163,7 @@ def draw_card(c, x, y, main_cat, sub_cat, card, video_url, color_code, image_nam
         c.drawCentredString(x + card_width / 2, y + card_height - y_offset, move)
         y_offset += 3 * mm if move.strip().endswith("…") else 5 * mm
 
-    qr_url = f"{video_url}?t={card['Marqueur']}"
+    qr_url = f"{video_url}&t={card['Marqueur']}"
     qr = qrcode.make(qr_url)
     buffer = BytesIO()
     qr.save(buffer, format="PNG")
