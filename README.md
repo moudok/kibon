@@ -28,6 +28,19 @@ Ces cartes sont similaires à celles utilisées lors des examens Dan de la [FFTD
 
 ---
 
+Pour l'étui :  
+[boite.pdf](https://github.com/moudok/kibon/raw/main/boite.pdf)
+
+🖨️ Imprimer sur du **papier épais** au format :
+
+- 📄 **A4**
+- ⬇️ **Portrait**
+- 📏 Aucune mise à l’échelle (**100%**)
+
+✂️ **Découper** en suivant les guides de coupe et coller les parties grises.
+
+---
+
 ## ⚙️ Pour générer le PDF soi-même
 
 ### 📁 Structure du projet
