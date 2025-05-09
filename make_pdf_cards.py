@@ -175,17 +175,34 @@ def draw_card(c, x, y, main_cat, sub_cat, card, video_url, color_code, image_nam
 def draw_back_card(c, x, y, main_cat, sub_cat, color_code, image_name):
     c.setFillColorRGB(*hex_to_rgb(color_code))
     c.rect(x + 5 * mm, y + 5 * mm, card_width - 10 * mm, card_height - 10 * mm, fill=True, stroke=False)
-    # Header text
-    c.setFont("OpenSans", 6)
-    c.setFillColor("white")
-    c.drawString(x + 8 * mm, y + card_height - 9 * mm, "Source: FFTDA.fr 2022")
-    c.drawRightString(x + card_width - 8 * mm, y + card_height - 9 * mm, "moudok.fr")
+
     center_x = x + card_width / 2
-    center_y = y + card_height / 2 + 10 * mm
+
+    # Rectangle semi-transparent en haut
+    rect_x = x + 5 * mm
+    rect_y = y + card_height - 30 * mm
+    rect_w = card_width - 10 * mm
+    rect_h = 25 * mm
+    c.setFillColorRGB(0, 0, 0, alpha=0.25)
+    c.rect(rect_x, rect_y, rect_w, rect_h, fill=True, stroke=False)
+
+    # Texte catégorie + sous-catégorie
+    c.setFont("OpenSansExtraBold", 18)
+    c.setFillColor("black")
+    c.drawCentredString(center_x - 0.3 * mm, rect_y + rect_h - 12.3 * mm, main_cat)
+    c.drawCentredString(center_x + 0.1 * mm, rect_y + rect_h - 11.9 * mm, main_cat)
+    c.setFillColor("white")
+    c.drawCentredString(center_x, rect_y + rect_h - 12 * mm, main_cat)
+    c.setFont("OpenSans", 6)
+    c.drawCentredString(center_x, rect_y + 9 * mm, sub_cat)
+
+    # Cercle blanc translucide en bas
+    center_y = y + 40 * mm
     radius = 20 * mm
     c.setFillColorRGB(1, 1, 1, alpha=0.5)
     c.circle(center_x, center_y, radius, stroke=False, fill=True)
 
+    # SVG image centrée dans le cercle
     svg_path = os.path.join("images", image_name)
     svg_size = 30 * mm
     if image_name and os.path.exists(svg_path):
@@ -195,23 +212,14 @@ def draw_back_card(c, x, y, main_cat, sub_cat, color_code, image_name):
         drawing.scale(scale_x, scale_y)
         renderPDF.draw(drawing, c, center_x - svg_size / 2, center_y - svg_size / 2)
 
-    # Black semi-transparent rectangle below category/subcategory
-    rect_x = x + 5 * mm
-    rect_y = y + card_height / 2 - 47.5 * mm  # adjust vertically to be below texts
-    rect_w = card_width
-    rect_h = 25 * mm
-    c.setFillColorRGB(0, 0, 0, alpha=0.25)
-    c.rect(rect_x, rect_y, rect_w - 10 * mm, rect_h, fill=True, stroke=False)
-
-    c.setFont("OpenSansExtraBold", 18)
-    c.setFillColor("black")
-    c.drawCentredString(center_x - 0.3 * mm, y + card_height / 2 - 35.3 * mm, main_cat)
-    c.drawCentredString(center_x + 0.1 * mm, y + card_height / 2 - 34.9 * mm, main_cat)
-    c.setFillColor("white")
-    c.drawCentredString(center_x, y + card_height / 2 - 35 * mm, main_cat)
+    # Bas de la carte : mentions légales
     c.setFont("OpenSans", 6)
-    c.drawCentredString(center_x, y + card_height / 2 - 40 * mm, sub_cat)
+    c.setFillColor("white")
+    c.drawString(x + 8 * mm, y + 8 * mm, "Source: FFTDA.fr 2022")
+    c.drawRightString(x + card_width - 8 * mm, y + 8 * mm, "moudok.fr")
+
     c.setFillColor("black")
+
 
 # Main loop: 8 cards per page, front + back
 page_cards = []
